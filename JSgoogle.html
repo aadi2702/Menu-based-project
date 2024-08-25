@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Google Search</title>
+</head>
+<body>
+    <h1>Google Search</h1>
+    <input type="text" id="searchQuery" placeholder="Type your search here...">
+    <button onclick="searchGoogle()">Search</button>
+
+    <script>
+        function searchGoogle() {
+            const query = document.getElementById('searchQuery').value;
+            const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+            window.location.href = url;
+        }
+    </script>
+</body>
+</html>

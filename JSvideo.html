@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Webcam Stream</title>
+</head>
+<body> 
+    <h1>Live Webcam Stream</h1>
+    <video id="webcam" autoplay playsinline></video>
+    <p id="status"></p>
+
+    <script>
+        const video = document.getElementById('webcam');
+        const status = document.getElementById('status');
+
+        // Access webcam and stream live video to video element
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+                status.textContent = 'Live streaming started!';
+            })
+            .catch(error => {
+                status.textContent = 'Error accessing webcam: ' + error.message;
+                console.error('Error accessing webcam:', error);
+            });
+    </script>
+</body>
+</html>

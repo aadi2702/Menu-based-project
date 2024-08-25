@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech to Text</title>
+</head>
+<body> 
+    <h1>Speech to Text</h1>
+    <button id="start-btn">Start Listening</button>
+    <p id="result">Speak something...</p>
+    <p id="status"></p>
+
+    <script>
+        const startBtn = document.getElementById('start-btn');
+        const resultText = document.getElementById('result');
+        const statusText = document.getElementById('status');
+
+       
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            const recognition = new SpeechRecognition();
+            recognition.continuous = false; 
+            recognition.interimResults = false; 
+            recognition.lang = 'en-US'; 
+   
+            startBtn.addEventListener('click', () => {
+                recognition.start();
+                statusText.textContent = 'Listening...';
+            });
+
+            
+            recognition.addEventListener('result', (event) => {
+                const transcript = event.results[0][0].transcript;
+                resultText.textContent = `You said: "${transcript}"`;
+                statusText.textContent = 'Processing complete.';
+            });
+
+            
+            recognition.addEventListener('end', () => {
+                statusText.textContent = 'Click "Start Listening" to speak again.';
+            });
+
+            recognition.addEventListener('error', (event) => {
+                statusText.textContent = `Error occurred: ${event.error}`;
+            });
+
+        } else {
+            statusText.textContent = 'Sorry, your browser does not support speech recognition.';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Feature Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        nav {
+            margin: 60px auto 20px auto;
+            text-align: center;
+        }
+
+        nav button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        nav button:hover {
+            background-color: #45a049;
+        }
+
+        .section {
+            display: none;
+            padding: 20px;
+            max-width: 800px;
+            margin: 20px auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h2 {
+            color: #4CAF50;
+        }
+
+        .video-container {
+            position: relative;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        video {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        canvas {
+            display: none;
+        }
+
+        img {
+            display: block;
+            margin: 20px auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            width: calc(100% - 22px);
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px 0;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        p {
+            font-size: 16px;
+            color: #555;
+        }
+
+        .status {
+            font-weight: bold;
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Multi-Feature Application</h1>
+    </header>
+
+    <nav>
+        <button onclick="showSection('webcam-access')">Webcam Access</button>
+        <button onclick="showSection('google-search')">Google Search</button>
+        <button onclick="showSection('speech-to-text')">Speech to Text</button>
+        <button onclick="showSection('live-webcam')">Live Webcam Stream</button>
+    </nav>
+
+    <div id="webcam-access" class="section">
+        <h2>Webcam Access</h2>
+        <div class="video-container">
+            <video id="webcam-access-video" autoplay playsinline></video>
+        </div>
+        <button id="capture-btn">Capture Photo</button>
+        <canvas id="canvas"></canvas>
+        <img id="photo" alt="Captured Photo" />
+    </div>
+
+    <div id="google-search" class="section">
+        <h2>Google Search</h2>
+        <input type="text" id="searchQuery" placeholder="Type your search here...">
+        <button onclick="searchGoogle()">Search</button>
+    </div>
+
+    <div id="speech-to-text" class="section">
+        <h2>Speech to Text</h2>
+        <button id="start-btn">Start Listening</button>
+        <p id="result">Speak something...</p>
+        <p id="status" class="status"></p>
+    </div>
+
+    <div id="live-webcam" class="section">
+        <h2>Live Webcam Stream</h2>
+        <div class="video-container">
+            <video id="live-webcam-video" autoplay playsinline></video>
+        </div>
+        <p id="live-status" class="status"></p>
+    </div>
+
+    <script>
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(id).classList.add('active');
+        }
+
+        // Webcam Access
+        const webcamAccessVideo = document.getElementById('webcam-access-video');
+        const canvas = document.getElementById('canvas');
+        const captureBtn = document.getElementById('capture-btn');
+        const photo = document.getElementById('photo');
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                webcamAccessVideo.srcObject = stream;
+            })
+            .catch(error => {
+                console.error('Error accessing webcam:', error);
+            });
+
+        captureBtn.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            canvas.width = webcamAccessVideo.videoWidth;
+            canvas.height = webcamAccessVideo.videoHeight;
+            context.drawImage(webcamAccessVideo, 0, 0, canvas.width, canvas.height);
+
+            const imageDataUrl = canvas.toDataURL('image/png');
+            photo.src = imageDataUrl;
+            photo.style.display = 'block';
+        });
+
+        // Google Search
+        function searchGoogle() {
+            const query = document.getElementById('searchQuery').value;
+            const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+            window.location.href = url;
+        }
+
+        // Speech to Text
+        const startBtn = document.getElementById('start-btn');
+        const resultText = document.getElementById('result');
+        const statusText = document.getElementById('status');
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            const recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+
+            startBtn.addEventListener('click', () => {
+                recognition.start();
+                statusText.textContent = 'Listening...';
+            });
+
+            recognition.addEventListener('result', (event) => {
+                const transcript = event.results[0][0].transcript;
+                resultText.textContent = `You said: "${transcript}"`;
+                statusText.textContent = 'Processing complete.';
+            });
+
+            recognition.addEventListener('end', () => {
+                statusText.textContent = 'Click "Start Listening" to speak again.';
+            });
+
+            recognition.addEventListener('error', (event) => {
+                statusText.textContent = `Error occurred: ${event.error}`;
+            });
+
+        } else {
+            statusText.textContent = 'Sorry, your browser does not support speech recognition.';
+        }
+
+        // Live Webcam Stream
+        const liveWebcamVideo = document.getElementById('live-webcam-video');
+        const liveStatus = document.getElementById('live-status');
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                liveWebcamVideo.srcObject = stream;
+                liveStatus.textContent = 'Live streaming started!';
+            })
+            .catch(error => {
+                liveStatus.textContent = 'Error accessing webcam: ' + error.message;
+                console.error('Error accessing webcam:', error);
+            });
+    </script>
+</body>
+</html>
